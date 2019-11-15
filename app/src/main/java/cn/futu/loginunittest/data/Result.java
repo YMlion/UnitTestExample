@@ -1,7 +1,7 @@
 package cn.futu.loginunittest.data;
 
 /**
- * A generic class that holds a result success w/ data or an error exception.
+ * login result : success or error
  */
 public class Result<T>
 {

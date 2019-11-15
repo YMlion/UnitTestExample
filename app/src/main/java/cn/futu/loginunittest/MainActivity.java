@@ -17,6 +17,9 @@ import cn.futu.loginunittest.data.LoginDataSource;
 import cn.futu.loginunittest.data.LoginRepository;
 import cn.futu.loginunittest.data.model.LoggedInUser;
 
+/**
+ * main view
+ */
 public class MainActivity extends AppCompatActivity implements MainContract.View
 {
 

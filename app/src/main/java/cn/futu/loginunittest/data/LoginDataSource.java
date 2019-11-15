@@ -5,7 +5,7 @@ import java.io.IOException;
 import cn.futu.loginunittest.data.model.LoggedInUser;
 
 /**
- * Class that handles authentication w/ login credentials and retrieves user information.
+ * mock data source
  */
 public class LoginDataSource
 {
