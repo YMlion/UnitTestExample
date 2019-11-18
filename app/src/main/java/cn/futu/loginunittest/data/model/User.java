@@ -1,16 +1,16 @@
 package cn.futu.loginunittest.data.model;
 
 /**
- * Data class that captures user information for logged in users retrieved from LoginRepository
+ * Data class that captures user information for logged in users retrieved from Repository
  */
-public class LoggedInUser
+public class User
 {
 
     private String userId;
     private String displayName;
     private boolean isVerifyPhoneCode;
 
-    public LoggedInUser(String userId, String displayName, boolean isVerifyPhoneCode)
+    public User(String userId, String displayName, boolean isVerifyPhoneCode)
     {
         this.userId = userId;
         this.displayName = displayName;

@@ -1,8 +1,15 @@
 package cn.futu.loginunittest;
 
-import cn.futu.loginunittest.data.LoginRepository;
+import java.util.List;
+
+import cn.futu.loginunittest.data.Repository;
 import cn.futu.loginunittest.data.Result;
-import cn.futu.loginunittest.data.model.LoggedInUser;
+import cn.futu.loginunittest.data.model.Contact;
+import cn.futu.loginunittest.data.model.User;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * presenter
@@ -11,12 +18,15 @@ public class LoginPresenter implements MainContract.Presenter
 {
 
     private MainContract.View mView;
-    private LoginRepository mRepository;
+    private Repository mRepository;
+    private User mUser;
+    private CompositeDisposable mDisposable = new CompositeDisposable();
 
-    public LoginPresenter(MainContract.View view, LoginRepository repository)
+    public LoginPresenter(MainContract.View view, Repository repository)
     {
         mView = view;
         mRepository = repository;
+
     }
 
     @Override
@@ -30,7 +40,7 @@ public class LoginPresenter implements MainContract.Presenter
         }
         else if (result instanceof Result.Success)
         {
-            LoggedInUser user = (LoggedInUser) ((Result.Success) result).getData();
+            User user = (User) ((Result.Success) result).getData();
             if (user.isVerifyPhoneCode())
             {
                 mView.verifyPhoneCode(user);
@@ -39,6 +49,7 @@ public class LoginPresenter implements MainContract.Presenter
             {
                 mView.onLoginSuccess(user);
             }
+            mUser = user;
         }
     }
 
@@ -61,8 +72,40 @@ public class LoginPresenter implements MainContract.Presenter
     }
 
     @Override
+    public void loadContactList()
+    {
+        mView.onLoadStart();
+        mDisposable.add(mRepository.loadContactList(mUser.getUserId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<Contact>>()
+                {
+                    @Override
+                    public void accept(List<Contact> contacts)
+                    {
+                        if (contacts != null && !contacts.isEmpty())
+                        {
+                            mView.showContactList(contacts);
+                        }
+                        else
+                        {
+                            mView.showEmpty();
+                        }
+                    }
+                }, new Consumer<Throwable>()
+                {
+                    @Override
+                    public void accept(Throwable throwable)
+                    {
+                        mView.onLoadFailed(throwable.getMessage());
+                    }
+                }));
+    }
+
+    @Override
     public void onDestroy()
     {
         mView = null;
+        mDisposable.clear();
     }
 }

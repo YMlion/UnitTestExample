@@ -12,10 +12,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+
 import androidx.appcompat.app.AppCompatActivity;
-import cn.futu.loginunittest.data.LoginDataSource;
-import cn.futu.loginunittest.data.LoginRepository;
-import cn.futu.loginunittest.data.model.LoggedInUser;
+import cn.futu.loginunittest.data.LocalDataSource;
+import cn.futu.loginunittest.data.RemoteDataSource;
+import cn.futu.loginunittest.data.Repository;
+import cn.futu.loginunittest.data.model.Contact;
+import cn.futu.loginunittest.data.model.User;
 
 /**
  * main view
@@ -23,10 +27,13 @@ import cn.futu.loginunittest.data.model.LoggedInUser;
 public class MainActivity extends AppCompatActivity implements MainContract.View
 {
 
+    private View loginContent;
+    private View listContent;
     private EditText usernameEditText;
     private EditText passwordEditText;
     private Button loginButton;
     private ProgressBar loadingProgressBar;
+    private Button loadListButton;
 
     private MainContract.Presenter mPresenter;
 
@@ -36,12 +43,15 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mPresenter = new LoginPresenter(this, LoginRepository.getInstance(new LoginDataSource()));
+        mPresenter = new LoginPresenter(this, Repository.getInstance(new RemoteDataSource(), new LocalDataSource()));
 
+        loginContent = findViewById(R.id.login_content);
+        listContent = findViewById(R.id.list_content);
         usernameEditText = findViewById(R.id.username);
         passwordEditText = findViewById(R.id.password);
         loginButton = findViewById(R.id.login);
         loadingProgressBar = findViewById(R.id.loading);
+        loadListButton = findViewById(R.id.load_list_btn);
 
         TextWatcher afterTextChangedListener = new TextWatcher()
         {
@@ -86,9 +96,16 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             @Override
             public void onClick(View v)
             {
-                loadingProgressBar.setVisibility(View.VISIBLE);
                 mPresenter.login(usernameEditText.getText().toString(),
                         passwordEditText.getText().toString());
+            }
+        });
+        loadListButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                mPresenter.loadContactList();
             }
         });
     }
@@ -101,15 +118,17 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     }
 
     @Override
-    public void onLoginSuccess(LoggedInUser user)
+    public void onLoginSuccess(User user)
     {
         loadingProgressBar.setVisibility(View.GONE);
         loginButton.setEnabled(true);
         Toast.makeText(getApplicationContext(), getString(R.string.welcome), Toast.LENGTH_LONG).show();
+        loginContent.setVisibility(View.GONE);
+        listContent.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void verifyPhoneCode(LoggedInUser user)
+    public void verifyPhoneCode(User user)
     {
         loadingProgressBar.setVisibility(View.GONE);
         loginButton.setEnabled(true);
@@ -136,6 +155,33 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         {
             passwordEditText.setError(getString(R.string.invalid_password));
         }
+    }
+
+    @Override
+    public void onLoadStart()
+    {
+        loadingProgressBar.setVisibility(View.VISIBLE);
+        loadListButton.setEnabled(false);
+    }
+
+    @Override
+    public void showContactList(List<Contact> contacts)
+    {
+        loadingProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showEmpty()
+    {
+        loadingProgressBar.setVisibility(View.GONE);
+        Toast.makeText(getApplicationContext(), getString(R.string.list_empty), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onLoadFailed(String message)
+    {
+        loadingProgressBar.setVisibility(View.GONE);
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

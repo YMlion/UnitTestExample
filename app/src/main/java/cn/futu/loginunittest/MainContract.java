@@ -1,6 +1,9 @@
 package cn.futu.loginunittest;
 
-import cn.futu.loginunittest.data.model.LoggedInUser;
+import java.util.List;
+
+import cn.futu.loginunittest.data.model.Contact;
+import cn.futu.loginunittest.data.model.User;
 
 /**
  * View、Presenter
@@ -12,13 +15,21 @@ class MainContract
 
         void onLoginStart();
 
-        void onLoginSuccess(LoggedInUser user);
+        void onLoginSuccess(User user);
 
-        void verifyPhoneCode(LoggedInUser user);
+        void verifyPhoneCode(User user);
 
         void onLoginFailed(String tips);
 
         void changeInputState(boolean phoneError, boolean pwdError);
+
+        void onLoadStart();
+
+        void showContactList(List<Contact> contacts);
+
+        void showEmpty();
+
+        void onLoadFailed(String message);
     }
 
     interface Presenter
@@ -30,5 +41,6 @@ class MainContract
 
         void onDestroy();
 
+        void loadContactList();
     }
 }
