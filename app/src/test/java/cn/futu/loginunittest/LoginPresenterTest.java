@@ -4,28 +4,19 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.powermock.reflect.Whitebox;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import cn.futu.loginunittest.data.Repository;
 import cn.futu.loginunittest.data.Result;
-import cn.futu.loginunittest.data.model.Contact;
 import cn.futu.loginunittest.data.model.User;
-import io.reactivex.Observable;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -121,98 +112,4 @@ public class LoginPresenterTest
         mPresenter.onDestroy();
         mPresenter.login("", "");
     }
-
-    @Test
-    public void loadContactList_cacheAndNet()
-    {
-        final User user = new User("007", "", false);
-        Whitebox.setInternalState(mPresenter, "mUser", user);
-        List<Contact> contacts1 = new ArrayList<>();
-        contacts1.add(new Contact(1, "", ""));
-        List<Contact> contacts2 = new ArrayList<>();
-        contacts2.add(new Contact(1, "", ""));
-
-        when(mRepository.loadContactList(user.getUserId())).thenReturn(Observable.concat(Observable.just(contacts1),
-                Observable.just(contacts2)));
-
-        mPresenter.loadContactList();
-
-        verify(mView).onLoadStart();
-        verify(mView, times(2)).showContactList((List<Contact>) any());
-        InOrder order = inOrder(mView);
-        order.verify(mView).showContactList(contacts1);
-        order.verify(mView).showContactList(contacts2);
-    }
-
-    @Test
-    public void loadContactList_justCache()
-    {
-        final User user = new User("007", "", false);
-        Whitebox.setInternalState(mPresenter, "mUser", user);
-        List<Contact> contacts = new ArrayList<>();
-        contacts.add(new Contact(1, "", ""));
-
-        final String error = "error";
-        when(mRepository.loadContactList(user.getUserId())).thenReturn(Observable.concat(Observable.just(contacts),
-                Observable.<List<Contact>>error(new Exception(error))));
-
-        mPresenter.loadContactList();
-
-        verify(mView).onLoadStart();
-        verify(mView).showContactList(contacts);
-        verify(mView).onLoadFailed(error);
-    }
-
-    @Test
-    public void loadContactList_justNet()
-    {
-        final User user = new User("007", "", false);
-        Whitebox.setInternalState(mPresenter, "mUser", user);
-        List<Contact> contacts = new ArrayList<>();
-        contacts.add(new Contact(1, "", ""));
-
-        when(mRepository.loadContactList(user.getUserId()))
-                .thenReturn(Observable.concat(Observable.<List<Contact>>empty(), Observable.just(contacts)));
-
-        mPresenter.loadContactList();
-
-        verify(mView).onLoadStart();
-        verify(mView).showContactList(contacts);
-    }
-
-    @Test
-    public void loadContactList_error()
-    {
-        final User user = new User("007", "", false);
-        Whitebox.setInternalState(mPresenter, "mUser", user);
-
-        final String error = "error";
-        when(mRepository.loadContactList(user.getUserId())).thenReturn(Observable.concat(Observable.<List<Contact>>empty(),
-                Observable.<List<Contact>>error(new Exception(error))));
-
-        mPresenter.loadContactList();
-
-        verify(mView).onLoadStart();
-        verify(mView).onLoadFailed(error);
-    }
-
-    @Test
-    public void loadContactList_empty()
-    {
-        final User user = new User("007", "", false);
-        Whitebox.setInternalState(mPresenter, "mUser", user);
-        List<Contact> contacts1 = new ArrayList<>();
-        contacts1.add(new Contact(1, "", ""));
-        List<Contact> contacts2 = new ArrayList<>();
-
-        when(mRepository.loadContactList(user.getUserId())).thenReturn(Observable.concat(Observable.just(contacts1),
-                Observable.just(contacts2)));
-
-        mPresenter.loadContactList();
-
-        verify(mView).onLoadStart();
-        verify(mView).showContactList(contacts1);
-        verify(mView).showEmpty();
-    }
-
 }

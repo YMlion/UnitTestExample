@@ -1,5 +1,6 @@
 package cn.futu.loginunittest;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,13 +13,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.List;
-
 import androidx.appcompat.app.AppCompatActivity;
+import cn.futu.loginunittest.contact.ContactActivity;
 import cn.futu.loginunittest.data.LocalDataSource;
 import cn.futu.loginunittest.data.RemoteDataSource;
 import cn.futu.loginunittest.data.Repository;
-import cn.futu.loginunittest.data.model.Contact;
 import cn.futu.loginunittest.data.model.User;
 
 /**
@@ -27,13 +26,10 @@ import cn.futu.loginunittest.data.model.User;
 public class MainActivity extends AppCompatActivity implements MainContract.View
 {
 
-    private View loginContent;
-    private View listContent;
     private EditText usernameEditText;
     private EditText passwordEditText;
     private Button loginButton;
     private ProgressBar loadingProgressBar;
-    private Button loadListButton;
 
     private MainContract.Presenter mPresenter;
 
@@ -45,13 +41,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
         mPresenter = new LoginPresenter(this, Repository.getInstance(new RemoteDataSource(), new LocalDataSource()));
 
-        loginContent = findViewById(R.id.login_content);
-        listContent = findViewById(R.id.list_content);
         usernameEditText = findViewById(R.id.username);
         passwordEditText = findViewById(R.id.password);
         loginButton = findViewById(R.id.login);
         loadingProgressBar = findViewById(R.id.loading);
-        loadListButton = findViewById(R.id.load_list_btn);
 
         TextWatcher afterTextChangedListener = new TextWatcher()
         {
@@ -100,14 +93,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                         passwordEditText.getText().toString());
             }
         });
-        loadListButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                mPresenter.loadContactList();
-            }
-        });
     }
 
     @Override
@@ -123,8 +108,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         loadingProgressBar.setVisibility(View.GONE);
         loginButton.setEnabled(true);
         Toast.makeText(getApplicationContext(), getString(R.string.welcome), Toast.LENGTH_LONG).show();
-        loginContent.setVisibility(View.GONE);
-        listContent.setVisibility(View.VISIBLE);
+        final Intent intent = new Intent(this, ContactActivity.class);
+        intent.putExtra("id", user.getUserId());
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -155,33 +142,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         {
             passwordEditText.setError(getString(R.string.invalid_password));
         }
-    }
-
-    @Override
-    public void onLoadStart()
-    {
-        loadingProgressBar.setVisibility(View.VISIBLE);
-        loadListButton.setEnabled(false);
-    }
-
-    @Override
-    public void showContactList(List<Contact> contacts)
-    {
-        loadingProgressBar.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void showEmpty()
-    {
-        loadingProgressBar.setVisibility(View.GONE);
-        Toast.makeText(getApplicationContext(), getString(R.string.list_empty), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onLoadFailed(String message)
-    {
-        loadingProgressBar.setVisibility(View.GONE);
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

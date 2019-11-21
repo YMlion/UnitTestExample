@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import cn.futu.loginunittest.data.model.Contact;
+import cn.futu.loginunittest.data.model.PhoneInfo;
 import cn.futu.loginunittest.data.model.User;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -37,10 +38,10 @@ public class Repository
         return instance;
     }
 
-    public Result<User> login(String username, String password)
+    public Result<User> login(String phone, String password)
     {
         // handle login
-        return remoteDataSource.login(username, password);
+        return remoteDataSource.login(phone, password);
     }
 
     public Observable<List<Contact>> loadContactList(final String id)
@@ -93,5 +94,31 @@ public class Repository
 
         return Observable.concat(cache, net);
 
+    }
+
+    public Observable<PhoneInfo> searchPhone(String phone)
+    {
+        return Observable.just(phone)
+                .flatMap(new Function<String, ObservableSource<PhoneInfo>>()
+                {
+                    @Override
+                    public ObservableSource<PhoneInfo> apply(String s)
+                    {
+                        final Result result = remoteDataSource.searchPhone(s);
+                        if (result instanceof Result.Success)
+                        {
+                            final Object data = ((Result.Success) result).getData();
+                            if (data instanceof PhoneInfo)
+                            {
+                                return Observable.just((PhoneInfo) data);
+                            }
+                            else
+                            {
+                                return Observable.error(new PhoneInfo.NotFoundException(data.toString()));
+                            }
+                        }
+                        return Observable.error(((Result.Error) result).getError());
+                    }
+                });
     }
 }

@@ -1,15 +1,22 @@
 <resources>
-  <string name="app_name">UnitTestDemo</string>
-  <!-- Strings related to login -->
-  <string name="prompt_phone">phone number</string>
-  <string name="prompt_password">Password</string>
-  <string name="action_sign_in">Sign in or register</string>
-  <string name="action_load_list">load list</string>
-  <string name="action_sign_in_short">Sign in</string>
-  <string name="welcome">Welcome !</string>
-  <string name="verify">请注意接收短信验证码</string>
-  <string name="invalid_username">手机格式错误</string>
-  <string name="invalid_password">密码格式错误</string>
-  <string name="login_failed">Login failed</string>
-  <string name="list_empty">list is empty</string>
+    <string name="app_name">UnitTestDemo</string>
+    <!-- Strings related to login -->
+    <string name="prompt_phone">phone number</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">Welcome !</string>
+    <string name="verify">请注意接收短信验证码</string>
+    <string name="invalid_username">手机格式错误</string>
+    <string name="invalid_password">密码格式错误</string>
+    <string name="login_failed">Login failed</string>1
+    <string name="list_empty">list is empty</string>
+    <string name="title_activity_contact">电话本</string>
+    <string name="title_activity_search">电话查询</string>
+    <string name="search">搜索</string>
+    <string name="search_result">搜索结果</string>
+    <string name="phone_num">号码</string>
+    <string name="address">归属地</string>
+    <string name="state_tip">是否异常</string>
+    <string name="user_login">用户登录</string>
 </resources>
