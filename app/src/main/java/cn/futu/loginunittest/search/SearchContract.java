@@ -42,7 +42,7 @@ public class SearchContract
         /**
          * 销毁
          */
-        void onDestroy();
+        void destroy();
 
         /**
          * 搜索电话号码

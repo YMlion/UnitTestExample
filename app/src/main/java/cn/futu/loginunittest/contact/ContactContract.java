@@ -39,7 +39,7 @@ public class ContactContract
         /**
          * 销毁
          */
-        void onDestroy();
+        void destroy();
 
         /**
          * 加载联系人列表

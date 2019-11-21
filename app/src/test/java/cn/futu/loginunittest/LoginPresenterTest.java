@@ -109,7 +109,7 @@ public class LoginPresenterTest
     @Test(expected = NullPointerException.class)
     public void onDestroy()
     {
-        mPresenter.onDestroy();
+        mPresenter.destroy();
         mPresenter.login("", "");
     }
 }

@@ -63,7 +63,7 @@ public class LoginPresenter implements MainContract.Presenter
     }
 
     @Override
-    public void onDestroy()
+    public void destroy()
     {
         mView = null;
         mDisposable.clear();

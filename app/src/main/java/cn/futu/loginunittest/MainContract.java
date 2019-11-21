@@ -52,7 +52,7 @@ class MainContract
         /**
          * 销毁回调
          */
-        void onDestroy();
+        void destroy();
 
     }
 }

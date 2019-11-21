@@ -97,7 +97,7 @@ public class ContactActivity extends AppCompatActivity implements ContactContrac
     protected void onDestroy()
     {
         super.onDestroy();
-        mPresenter.onDestroy();
+        mPresenter.destroy();
     }
 
 }

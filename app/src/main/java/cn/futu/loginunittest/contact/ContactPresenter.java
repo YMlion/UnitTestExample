@@ -27,7 +27,7 @@ public class ContactPresenter implements ContactContract.Presenter
     }
 
     @Override
-    public void onDestroy()
+    public void destroy()
     {
         mView = null;
         mDisposable.clear();

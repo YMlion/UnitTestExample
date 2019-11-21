@@ -148,6 +148,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     protected void onDestroy()
     {
         super.onDestroy();
-        mPresenter.onDestroy();
+        mPresenter.destroy();
     }
 }

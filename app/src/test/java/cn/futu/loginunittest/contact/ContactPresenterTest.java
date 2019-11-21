@@ -52,7 +52,7 @@ public class ContactPresenterTest
     @Test(expected = NullPointerException.class)
     public void onDestroy()
     {
-        mPresenter.onDestroy();
+        mPresenter.destroy();
         mPresenter.loadContactList();
     }
 

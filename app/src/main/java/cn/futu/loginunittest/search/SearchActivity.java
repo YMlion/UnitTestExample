@@ -112,7 +112,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         super.onDestroy();
         if (mPresenter != null)
         {
-            mPresenter.onDestroy();
+            mPresenter.destroy();
             mPresenter = null;
         }
     }
