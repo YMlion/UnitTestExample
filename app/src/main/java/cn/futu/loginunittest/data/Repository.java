@@ -2,6 +2,7 @@ package cn.futu.loginunittest.data;
 
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import cn.futu.loginunittest.data.model.Contact;
 import cn.futu.loginunittest.data.model.PhoneInfo;
@@ -38,10 +39,17 @@ public class Repository
         return instance;
     }
 
-    public Result<User> login(String phone, String password)
+    public Observable<Result<User>> login(final String phone, final String password)
     {
-        // handle login
-        return remoteDataSource.login(phone, password);
+        return Observable.timer(1, TimeUnit.SECONDS)
+                .map(new Function<Long, Result<User>>()
+                {
+                    @Override
+                    public Result<User> apply(Long aLong)
+                    {
+                        return remoteDataSource.login(phone, password);
+                    }
+                });
     }
 
     public Observable<List<Contact>> loadContactList(final String id)

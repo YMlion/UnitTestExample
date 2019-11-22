@@ -59,20 +59,22 @@ public class ContactPresenterTest
     @Test
     public void loadContactList_cacheAndNetNormal()
     {
+        // 数据准备
         final User user = new User(ID, "", false);
         List<Contact> cacheList = new ArrayList<>();
         cacheList.add(new Contact(1, "", ""));
         List<Contact> netList = new ArrayList<>();
         netList.add(new Contact(1, "", ""));
-
+        // mock
         when(mRepository.loadContactList(user.getUserId())).thenReturn(Observable.concat(Observable.just(cacheList),
                 Observable.just(netList)));
-
+        // 执行
         mPresenter.loadContactList();
-
-        verify(mView).onLoadStart();
-        verify(mView, times(2)).showContactList((List<Contact>) any());
-        InOrder order = inOrder(mView);
+        // 验证结果
+        verify(mView, times(2)).showContactList((List<Contact>) any());// 执行了2次
+        InOrder order = inOrder(mView, mRepository);
+        order.verify(mView).onLoadStart();
+        order.verify(mRepository).loadContactList(user.getUserId());
         order.verify(mView).showContactList(cacheList);
         order.verify(mView).showContactList(netList);
     }
@@ -80,17 +82,19 @@ public class ContactPresenterTest
     @Test
     public void loadContactList_cacheAndNetEmpty()
     {
+        // 数据准备
         final User user = new User(ID, "", false);
         List<Contact> cacheList = new ArrayList<>();
         cacheList.add(new Contact(1, "", ""));
         List<Contact> netEmptyList = new ArrayList<>();
-
+        // mock
         when(mRepository.loadContactList(user.getUserId())).thenReturn(Observable.concat(Observable.just(cacheList),
                 Observable.just(netEmptyList)));
-
+        // 执行
         mPresenter.loadContactList();
-
+        // 验证结果
         verify(mView).onLoadStart();
+        verify(mRepository).loadContactList(user.getUserId());
         verify(mView).showContactList(cacheList);
         verify(mView).showEmpty();
     }
@@ -98,17 +102,20 @@ public class ContactPresenterTest
     @Test
     public void loadContactList_cacheAndNetError()
     {
+        // 数据准备
         final User user = new User(ID, "", false);
         List<Contact> contacts = new ArrayList<>();
         contacts.add(new Contact(1, "", ""));
 
         final String error = "error";
+        // mock
         when(mRepository.loadContactList(user.getUserId())).thenReturn(Observable.concat(Observable.just(contacts),
                 Observable.<List<Contact>>error(new Exception(error))));
-
+        // 执行
         mPresenter.loadContactList();
-
+        // 验证结果
         verify(mView).onLoadStart();
+        verify(mRepository).loadContactList(user.getUserId());
         verify(mView).showContactList(contacts);
         verify(mView).onLoadFailed(error);
     }
@@ -116,31 +123,35 @@ public class ContactPresenterTest
     @Test
     public void loadContactList_noCacheAndNetNormal()
     {
+        // 数据准备
         final User user = new User(ID, "", false);
         List<Contact> contacts = new ArrayList<>();
         contacts.add(new Contact(1, "", ""));
-
+        // mock
         when(mRepository.loadContactList(user.getUserId()))
                 .thenReturn(Observable.concat(Observable.<List<Contact>>empty(), Observable.just(contacts)));
-
+        // 执行
         mPresenter.loadContactList();
-
+        // 验证结果
         verify(mView).onLoadStart();
+        verify(mRepository).loadContactList(user.getUserId());
         verify(mView).showContactList(contacts);
     }
 
     @Test
     public void loadContactList_noCacheAndNetEmpty()
     {
+        // 数据准备
         final User user = new User(ID, "", false);
         List<Contact> contacts = new ArrayList<>();
-
+        // mock
         when(mRepository.loadContactList(user.getUserId())).thenReturn(Observable.concat(Observable.<List<Contact>>empty(),
                 Observable.just(contacts)));
-
+        // 执行
         mPresenter.loadContactList();
-
+        // 验证结果
         verify(mView).onLoadStart();
+        verify(mRepository).loadContactList(user.getUserId());
         verify(mView).showEmpty();
         verify(mView, never()).showContactList(anyList());
     }
@@ -148,15 +159,17 @@ public class ContactPresenterTest
     @Test
     public void loadContactList_noCacheAndNetError()
     {
+        // 数据准备
         final User user = new User(ID, "", false);
-
         final String error = "error";
+        // mock
         when(mRepository.loadContactList(user.getUserId())).thenReturn(Observable.concat(Observable.<List<Contact>>empty(),
                 Observable.<List<Contact>>error(new Exception(error))));
-
+        // 执行
         mPresenter.loadContactList();
-
+        // 验证结果
         verify(mView).onLoadStart();
+        verify(mRepository).loadContactList(user.getUserId());
         verify(mView).onLoadFailed(error);
     }
 }
