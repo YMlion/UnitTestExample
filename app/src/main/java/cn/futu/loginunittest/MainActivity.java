@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.user_login);
         setContentView(R.layout.activity_login);
 
         mPresenter = new LoginPresenter(this, Repository.getInstance(new RemoteDataSource(), new LocalDataSource()));
