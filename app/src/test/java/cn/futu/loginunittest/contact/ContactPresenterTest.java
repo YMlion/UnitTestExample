@@ -171,5 +171,6 @@ public class ContactPresenterTest
         verify(mView).onLoadStart();
         verify(mRepository).loadContactList(user.getUserId());
         verify(mView).onLoadFailed(error);
+        verify(mView, never()).showContactList(anyList());
     }
 }

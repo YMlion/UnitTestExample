@@ -83,7 +83,7 @@ public class RxRule implements TestRule
                     }
                 });
 
-                base.evaluate();
+                base.evaluate(); // 被测方法执行
 
                 RxAndroidPlugins.reset();
                 RxJavaPlugins.reset();
